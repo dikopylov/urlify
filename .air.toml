@@ -1,0 +1,11 @@
+# Full config file https://github.com/cosmtrek/air/blob/master/air_example.toml
+
+[build]
+# Binary file yields from `cmd`.
+bin = "tmp/main"
+
+# Watch these filename extensions.
+include_ext = ["go", "toml",]
+
+# Ignore these filename extensions or directories.
+exclude_dir = ["assets", "tmp", "vendor", "frontend/node_modules", "var", "db", "config"]

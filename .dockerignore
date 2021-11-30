@@ -1,0 +1,25 @@
+/.idea
+/tmp
+/logs
+/var
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+
+# Test binary, built with `go test -c`
+*.test
+
+*.log
+
+.git
+.cache
+.gitignore
+.air.local.toml
+
+config.toml
+docker-compose.local.yml
