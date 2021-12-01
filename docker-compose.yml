@@ -1,0 +1,47 @@
+version: '3.9'
+
+networks:
+  urlify-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    volumes:
+      - .:/opt/app/urlify
+    networks:
+      - urlify-network
+    depends_on:
+      - clickhouse-bulk
+      - migrator
+
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - ${DB_PORT:-5432}:5432
+    volumes:
+      - ./postgresql/data:/postgresql/data
+      - ./database/seeds:/postgresql/data/seeds
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    networks:
+      - location-network
+
+  migrator:
+    image: migrate/migrate
+    volumes:
+      - ./db/migrations:/opt/app/urlify/db/migrations
+    command: [ "-path", "/opt/app/urlify/db/migrations/", "-database",  "${DATABASE_DRIVER_NAME:-clickhouse}://${DATABASE_DRIVER_NAME:-clickhouse}:9000/${DATABASE_NAME}", "up"]
+    restart: on-failure
+    depends_on:
+      - clickhouse
+    networks:
+      - urlify-network
