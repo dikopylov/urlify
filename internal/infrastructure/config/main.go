@@ -8,7 +8,7 @@ import (
 
 var (
 	config Configuration
-	once sync.Once
+	once   sync.Once
 )
 
 type Configuration struct {
@@ -18,18 +18,17 @@ type Configuration struct {
 
 type Application struct {
 	Environment string `mapstructure:"APP_ENVIRONMENT"`
-	Port        int `mapstructure:"APP_PORT"`
+	Port        int    `mapstructure:"APP_PORT"`
 }
 
 type Database struct {
-	Driver   string `mapstructure:"DB_DRIVER_NAME"`
-	Schema   string `mapstructure:"DB_SCHEMA"`
-	Host     string `mapstructure:"DB_HOST"`
-	Port     string `mapstructure:"DB_PORT"`
-	User     string `mapstructure:"DB_USER"`
-	Password string `mapstructure:"DB_PASSWORD"`
-	Name     string `mapstructure:"DB_NAME"`
-	Debug    string `mapstructure:"DB_DEBUG"`
+	Driver       string `mapstructure:"DB_DRIVER_NAME"`
+	Host         string `mapstructure:"DB_HOST"`
+	Port         string `mapstructure:"DB_PORT"`
+	User         string `mapstructure:"DB_USER"`
+	Password     string `mapstructure:"DB_PASSWORD"`
+	DatabaseName string `mapstructure:"DB_NAME"`
+	SSLmode      string `mapstructure:"DB_SSL_MODE"`
 }
 
 func LoadConfig() Configuration {

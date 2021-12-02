@@ -1,7 +1,7 @@
 # Full config file https://github.com/cosmtrek/air/blob/master/air_example.toml
 
 [build]
-# Binary file yields from `cmd`.
+# Binary file yields from `internal`.
 bin = "tmp/main"
 
 # Watch these filename extensions.
