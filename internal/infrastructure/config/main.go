@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 	"log"
 	"sync"
@@ -12,8 +13,8 @@ var (
 )
 
 type Configuration struct {
-	Application
-	Database
+	Application `mapstructure:",squash"`
+	Database    `mapstructure:",squash"`
 }
 
 type Application struct {
@@ -22,7 +23,7 @@ type Application struct {
 }
 
 type Database struct {
-	Driver       string `mapstructure:"DB_DRIVER_NAME"`
+	Driver       string `mapstructure:"DB_DRIVER"`
 	Host         string `mapstructure:"DB_HOST"`
 	Port         string `mapstructure:"DB_PORT"`
 	User         string `mapstructure:"DB_USER"`
@@ -34,9 +35,10 @@ type Database struct {
 func LoadConfig() Configuration {
 	once.Do(func() {
 		viper.SetEnvPrefix("urlify")
+
 		viper.SetConfigType("env")
 		viper.AddConfigPath(".")
-
+		viper.SetConfigFile(".env")
 		viper.AutomaticEnv()
 
 		err := viper.ReadInConfig()
@@ -45,6 +47,12 @@ func LoadConfig() Configuration {
 		}
 
 		err = viper.Unmarshal(&config)
+
+		if err != nil {
+			log.Fatalf("unable to decode into struct, %v", err)
+		}
+
+		fmt.Println("DRIVER: " + config.Driver)
 	})
 
 	return config

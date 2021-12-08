@@ -2,6 +2,7 @@
 /tmp
 /logs
 /var
+/postgresql
 
 # Binaries for programs and plugins
 *.exe

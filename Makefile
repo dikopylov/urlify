@@ -1,10 +1,10 @@
 .PHONY: up build shell migrate rollback
 
 up:
-	docker-compose -f docker-compose.yml -f config/dev/docker-compose.yml up -d
+	docker-compose -f docker-compose.yml -f deployments/dev/docker-compose.yml up -d
 
 build:
-	docker-compose -f docker-compose.yml -f config/dev/docker-compose.yml build
+	docker-compose -f docker-compose.yml -f deployments/dev/docker-compose.yml build
 
 shell:
 	docker-compose exec app sh
