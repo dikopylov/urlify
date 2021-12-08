@@ -4,12 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Serve() {
-	router := gin.Default()
-
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "pong"})
-	})
-
-	router.Run()
+func NewServer() *gin.Engine {
+	return gin.Default()
 }
