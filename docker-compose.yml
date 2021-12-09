@@ -27,7 +27,6 @@ services:
       - ${DB_PORT:-5432}:5432
     volumes:
       - ./postgresql/data:/postgresql/data
-      - ./database/seeds:/postgresql/data/seeds
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USERNAME:-postgres}

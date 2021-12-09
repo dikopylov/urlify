@@ -16,7 +16,7 @@ var (
 func Connect(config *config.Database) *sqlx.DB {
 	once.Do(func() {
 		source := fmt.Sprintf(
-			"%s://%s:%s@%s:%d/%s?sslmode=%s",
+			"%s://%s:%s@%s:%s/%s?sslmode=%s",
 			config.Driver, config.User, config.Password, config.Host, config.Port, config.DatabaseName, config.SSLmode,
 		)
 

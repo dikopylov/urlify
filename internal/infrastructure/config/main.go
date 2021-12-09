@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"github.com/spf13/viper"
 	"log"
 	"sync"
@@ -25,7 +24,7 @@ type Application struct {
 type Database struct {
 	Driver       string `mapstructure:"DB_DRIVER"`
 	Host         string `mapstructure:"DB_HOST"`
-	Port         string `mapstructure:"DB_PORT"`
+	Port         string `mapstructure:"POSTGRES_PORT"`
 	User         string `mapstructure:"DB_USER"`
 	Password     string `mapstructure:"DB_PASSWORD"`
 	DatabaseName string `mapstructure:"DB_NAME"`
@@ -51,8 +50,6 @@ func LoadConfig() Configuration {
 		if err != nil {
 			log.Fatalf("unable to decode into struct, %v", err)
 		}
-
-		fmt.Println("DRIVER: " + config.Driver)
 	})
 
 	return config

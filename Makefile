@@ -1,17 +1,10 @@
 .PHONY: up build shell migrate rollback
 
 up:
-	docker-compose -f docker-compose.yml -f deployments/dev/docker-compose.yml up -d
+	docker-compose -f docker-compose.yml -f deployments/dev/docker-compose.yml up
 
 build:
 	docker-compose -f docker-compose.yml -f deployments/dev/docker-compose.yml build
 
 shell:
 	docker-compose exec app sh
-
-migrate:
-	docker-compose run migrator -path /opt/app/urlify/db/migrations/ -database clickhouse://clickhouse:9000/default up
-
-rollback:
-	docker-compose run migrator -path /opt/app/urlify/db/migrations/ -database clickhouse://clickhouse:9000/default down
-
