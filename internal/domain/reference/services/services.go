@@ -11,10 +11,10 @@ type ReferenceService struct {
 	factory    factories.ReferenceFactory
 }
 
-func NewReferenceService() ReferenceService {
+func NewReferenceService(repository repository.ReferenceRepository, factory factories.ReferenceFactory) ReferenceService {
 	return ReferenceService{
-		repository: repository.PsqlReferenceRepository{},
-		factory:    factories.ReferenceFactory{},
+		repository: repository,
+		factory:    factory,
 	}
 }
 

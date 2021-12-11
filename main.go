@@ -1,7 +1,9 @@
 package main
 
 import (
+	"urlify/internal/application/routers"
 	"urlify/internal/infrastructure/config"
+	"urlify/internal/infrastructure/container"
 	"urlify/internal/infrastructure/database"
 	"urlify/internal/infrastructure/server"
 )
@@ -9,9 +11,11 @@ import (
 func main() {
 	configuration := config.LoadConfig()
 
-	database.Connect(&configuration.Database)
+	db := database.Connect(&configuration.Database)
 
-	engine := server.New()
+	appContainer := container.NewContainer(db)
+
+	engine := server.New(&appContainer, routers.InitializeRouters)
 
 	engine.Run()
 }

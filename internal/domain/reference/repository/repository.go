@@ -18,6 +18,10 @@ type PsqlReferenceRepository struct {
 	db *sqlx.DB
 }
 
+func NewPsqlReferenceRepository(db *sqlx.DB) PsqlReferenceRepository {
+	return PsqlReferenceRepository{db: db}
+}
+
 func (repository PsqlReferenceRepository) Insert(entity *model.Reference) {
 	sql := fmt.Sprintf(`INSERT INTO %s (id, url, hash, created_at) VALUES (generateUUIDv4(), :url,:hash, now()) RETURNING id`, TABLE)
 
@@ -28,4 +32,8 @@ func (repository PsqlReferenceRepository) Insert(entity *model.Reference) {
 	}
 
 	entity.ID, _ = result.LastInsertId()
+}
+
+func (repository PsqlReferenceRepository) GetByHash(hash string) model.Reference {
+	return model.Reference{}
 }

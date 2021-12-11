@@ -2,18 +2,15 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
+	"urlify/internal/infrastructure/container"
 )
 
-func New() *gin.Engine {
+type routerFunction func(engine *gin.Engine, container *container.Container)
+
+func New(container *container.Container, initializeRouters routerFunction) *gin.Engine {
 	engine := gin.Default()
 
-	initializeRouters(engine)
+	initializeRouters(engine, container)
 
 	return engine
-}
-
-func initializeRouters(engine *gin.Engine) {
-	engine.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "pong"})
-	})
 }
