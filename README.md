@@ -4,10 +4,10 @@
 
 ## Routes
 
-| HTTP method | Route           |  Description       |
-|-------------|-----------------|--------------------|
-| POST        | /api/url/create | Create short link  |
-| GET         | /api/url/<hash> | Get link from hash |
+| HTTP method | Route       | Description        |
+|-------------|-------------|--------------------|
+| POST        | /api/url    | Create short link  |
+| GET         | /api/<hash> | Get link from hash |
 
 ## Migrations
 

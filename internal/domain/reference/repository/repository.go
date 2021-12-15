@@ -11,7 +11,7 @@ const TABLE = "references"
 
 type ReferenceRepository interface {
 	Insert(entity *model.Reference)
-	GetByHash(hash string) model.Reference
+	GetByHash(hash string) *model.Reference
 }
 
 type PsqlReferenceRepository struct {
@@ -34,6 +34,20 @@ func (repository PsqlReferenceRepository) Insert(entity *model.Reference) {
 	entity.ID, _ = result.LastInsertId()
 }
 
-func (repository PsqlReferenceRepository) GetByHash(hash string) model.Reference {
-	return model.Reference{}
+func (repository PsqlReferenceRepository) GetByHash(hash string) *model.Reference {
+	reference := model.Reference{}
+
+	sql := fmt.Sprintf(`SELECT * FROM %s WHERE hash=$1`, TABLE)
+
+	err := repository.db.Get(&reference, sql, hash)
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	if reference.ID == 0 {
+		return nil
+	}
+
+	return &reference
 }

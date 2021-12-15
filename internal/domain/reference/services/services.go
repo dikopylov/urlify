@@ -18,10 +18,14 @@ func NewReferenceService(repository repository.ReferenceRepository, factory fact
 	}
 }
 
-func (service ReferenceService) createReference(url string) model.Reference {
+func (service ReferenceService) CreateReference(url string) model.Reference {
 	reference := service.factory.Make(url)
 
 	service.repository.Insert(&reference)
 
 	return reference
+}
+
+func (service ReferenceService) GetByHash(hash string) *model.Reference {
+	return service.repository.GetByHash(hash)
 }
