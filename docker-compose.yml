@@ -29,7 +29,7 @@ services:
       - ./postgresql/data:/postgresql/data
     environment:
       POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
     networks:
       - urlify-network
@@ -38,7 +38,7 @@ services:
     image: migrate/migrate
     volumes:
       - ./database/migrations:/opt/app/urlify/database/migrations
-    command: [ "-path", "/opt/app/urlify/database/migrations/", "-database",  "${DATABASE_DRIVER_NAME:-postgres}://${DB_USER}:${DB_PASSWORD}@${DATABASE_DRIVER_NAME:-postgres}:5432/${DB_NAME}?sslmode=disable", "up" ]
+    command: [ "-path", "/opt/app/urlify/database/migrations/", "-database",  "${DATABASE_DRIVER:-postgres}://${DB_USER}:${DB_PASSWORD}@${DATABASE_DRIVER:-postgres}:5432/${DB_NAME}?sslmode=disable", "up" ]
     restart: on-failure
     depends_on:
       - postgres

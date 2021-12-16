@@ -14,5 +14,5 @@
 ### Make
 
 ```shell
-docker-compose run migrator create -dir /opt/app/urlify/db/migrations -ext sql -seq create_references_table
+docker-compose run migrator create -dir /opt/app/urlify/database/migrations -ext sql -seq create_references_table
 ```

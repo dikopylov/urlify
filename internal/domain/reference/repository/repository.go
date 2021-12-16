@@ -1,17 +1,45 @@
 package repository
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"log"
 	"urlify/internal/domain/reference/model"
 )
 
-const TABLE = "references"
+const (
+	TABLE       = "references"
+	COLUMN_URL  = "url"
+	COLUMN_HASH = "hash"
+)
+
+type Criteria struct {
+	parameters map[string]interface{}
+}
+
+func (c Criteria) AddParameter(column string, value interface{}) {
+	c.parameters[column] = value
+}
+
+func (c Criteria) convertToWhereClause() string {
+
+	result := ""
+
+	for column, value := range c.parameters {
+		result += fmt.Sprintf(`%s=%s`, column, value)
+	}
+
+	if result != "" {
+		return " WHERE " + result
+	}
+
+	return result
+}
 
 type ReferenceRepository interface {
 	Insert(entity *model.Reference)
-	GetByHash(hash string) *model.Reference
+	GetByCriteria(criteria Criteria) *model.Reference
 }
 
 type PsqlReferenceRepository struct {
@@ -23,31 +51,30 @@ func NewPsqlReferenceRepository(db *sqlx.DB) PsqlReferenceRepository {
 }
 
 func (repository PsqlReferenceRepository) Insert(entity *model.Reference) {
-	sql := fmt.Sprintf(`INSERT INTO %s (id, url, hash, created_at) VALUES (generateUUIDv4(), :url,:hash, now()) RETURNING id`, TABLE)
+	query := fmt.Sprintf(`INSERT INTO %s (url, hash, created_at) VALUES (:url, :hash, now())`, TABLE)
 
-	result, err := repository.db.NamedExec(sql, entity)
+	_, err := repository.db.NamedExec(query, entity)
 
 	if err != nil {
 		log.Fatalln(err)
 	}
-
-	entity.ID, _ = result.LastInsertId()
 }
 
-func (repository PsqlReferenceRepository) GetByHash(hash string) *model.Reference {
+func (repository PsqlReferenceRepository) GetByCriteria(criteria Criteria) *model.Reference {
 	reference := model.Reference{}
 
-	sql := fmt.Sprintf(`SELECT * FROM %s WHERE hash=$1`, TABLE)
+	query := fmt.Sprintf(`SELECT * FROM %s`, TABLE) + criteria.convertToWhereClause()
 
-	err := repository.db.Get(&reference, sql, hash)
+	err := repository.db.Get(&reference, query)
 
-	if err != nil {
+	switch err {
+	case nil:
+		return &reference
+	case sql.ErrNoRows:
+		return nil
+	default:
 		log.Fatalln(err)
-	}
-
-	if reference.ID == 0 {
 		return nil
 	}
 
-	return &reference
 }
