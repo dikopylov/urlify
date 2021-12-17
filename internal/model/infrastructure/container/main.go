@@ -2,10 +2,10 @@ package container
 
 import (
 	"github.com/jmoiron/sqlx"
-	"urlify/internal/domain/reference/factories"
-	"urlify/internal/domain/reference/repository"
-	encoding "urlify/internal/domain/reference/services"
-	encoding2 "urlify/internal/infrastructure/encoding"
+	"urlify/internal/model/domain/reference/factories"
+	"urlify/internal/model/domain/reference/repository"
+	"urlify/internal/model/domain/reference/services"
+	encoding2 "urlify/internal/model/infrastructure/encoding"
 )
 
 type Container struct {

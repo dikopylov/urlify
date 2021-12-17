@@ -1,1 +1,1 @@
-DROP TABLE references;
+DROP TABLE reference;

@@ -3,14 +3,14 @@ package routers
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"urlify/internal/application/controllers"
-	"urlify/internal/infrastructure/container"
+	"urlify/internal/controller"
+	"urlify/internal/model/infrastructure/container"
 )
 
 func InitializeRouters(engine *gin.Engine, container *container.Container) {
 	healthRouters(engine)
 
-	referenceRouters(engine, controllers.NewReferenceController(container.MakeReferenceService()))
+	referenceRouters(engine, controller.NewReferenceController(container.MakeReferenceService()))
 }
 
 func healthRouters(engine *gin.Engine) gin.IRoutes {
@@ -19,7 +19,7 @@ func healthRouters(engine *gin.Engine) gin.IRoutes {
 	})
 }
 
-func referenceRouters(engine *gin.Engine, controller controllers.ReferenceController) {
+func referenceRouters(engine *gin.Engine, controller controller.ReferenceController) {
 	engine.POST("api/url", controller.Create)
 	engine.GET("api/:hash", controller.View)
 }

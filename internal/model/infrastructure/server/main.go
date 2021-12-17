@@ -2,7 +2,7 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
-	"urlify/internal/infrastructure/container"
+	"urlify/internal/model/infrastructure/container"
 )
 
 type routerFunction func(engine *gin.Engine, container *container.Container)

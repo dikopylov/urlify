@@ -1,8 +1,8 @@
 package factories
 
 import (
-	"urlify/internal/domain/reference/model"
-	"urlify/internal/infrastructure/encoding"
+	"urlify/internal/model/domain/reference/model"
+	"urlify/internal/model/infrastructure/encoding"
 )
 
 type ReferenceFactory struct {

@@ -1,9 +1,10 @@
-package controllers
+package controller
 
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	encoding "urlify/internal/domain/reference/services"
+	"urlify/internal/controller/requests"
+	"urlify/internal/model/domain/reference/services"
 )
 
 type ReferenceController struct {
@@ -15,11 +16,22 @@ func NewReferenceController(service encoding.ReferenceService) ReferenceControll
 }
 
 func (controller *ReferenceController) Create(ctx *gin.Context) {
-	url := ctx.PostForm("url")
+	var creationRequest requests.CreationRequest
 
-	reference := controller.service.CreateReference(url)
+	if err := ctx.ShouldBindJSON(&creationRequest); err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 
-	ctx.JSON(http.StatusCreated, reference)
+		return
+	}
+
+	reference := controller.service.CreateReference(creationRequest.Url)
+
+	switch reference {
+	case nil:
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Error"})
+	default:
+		ctx.JSON(http.StatusCreated, reference)
+	}
 }
 
 func (controller *ReferenceController) View(ctx *gin.Context) {

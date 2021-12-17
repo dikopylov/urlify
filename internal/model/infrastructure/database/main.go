@@ -5,7 +5,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"sync"
-	"urlify/internal/infrastructure/config"
+	"urlify/internal/model/infrastructure/config"
 )
 
 var (
