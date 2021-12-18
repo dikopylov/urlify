@@ -1,10 +1,8 @@
 package repository
 
 import (
-	"database/sql"
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
-	"log"
 	"urlify/internal/model/domain/reference/model"
 )
 
@@ -27,10 +25,9 @@ func (c *Criteria) AddParameter(column string, value interface{}) {
 }
 
 type ReferenceRepository interface {
-	Insert(entity *model.Reference)
-	GetByCriteria(criteria Criteria) *model.Reference
+	Insert(entity *model.Reference) error
+	GetByCriteria(criteria Criteria) (*model.Reference, error)
 }
-
 type PsqlReferenceRepository struct {
 	db *sqlx.DB
 }
@@ -39,24 +36,23 @@ func NewPsqlReferenceRepository(db *sqlx.DB) *PsqlReferenceRepository {
 	return &PsqlReferenceRepository{db: db}
 }
 
-func (repository *PsqlReferenceRepository) Insert(entity *model.Reference) {
-	// @todo
-	//query, _, err := sq.Insert(Table).Columns("url", "hash", "created_at").ToSql()
+func (repository *PsqlReferenceRepository) Insert(entity *model.Reference) error {
+	query, _, err := sq.Insert(Table).Columns("url", "hash", "created_at").ToSql()
 
 	if err != nil {
-		log.Printf("Error: %s\n", err.Error())
-
-		return
+		return err
 	}
 
 	_, err = repository.db.NamedExec(query, entity)
 
 	if err != nil {
-		log.Fatalln(err)
+		return err
 	}
+
+	return nil
 }
 
-func (repository *PsqlReferenceRepository) GetByCriteria(criteria Criteria) *model.Reference {
+func (repository *PsqlReferenceRepository) GetByCriteria(criteria Criteria) (*model.Reference, error) {
 	reference := model.Reference{}
 
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
@@ -68,21 +64,14 @@ func (repository *PsqlReferenceRepository) GetByCriteria(criteria Criteria) *mod
 		ToSql()
 
 	if err != nil {
-		log.Printf("Error: %s\n", err.Error())
-
-		return nil
+		return nil, err
 	}
 
 	err = repository.db.Get(&reference, query, args)
 
-	switch err {
-	case nil:
-		return &reference
-	case sql.ErrNoRows:
-		return nil
-	default:
-		log.Fatalln(err)
-		return nil
+	if err != nil {
+		return nil, err
 	}
 
+	return &reference, nil
 }

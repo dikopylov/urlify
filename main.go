@@ -13,9 +13,9 @@ func main() {
 
 	db := database.Connect(&configuration.Database)
 
-	appContainer := container.NewContainer(db)
+	appContainer := container.New(db)
 
-	engine := server.New(&appContainer, routers.InitializeRouters)
+	engine := server.New(appContainer, routers.InitializeRouters)
 
 	engine.Run()
 }

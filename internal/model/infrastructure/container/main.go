@@ -2,23 +2,42 @@ package container
 
 import (
 	"github.com/jmoiron/sqlx"
+	"sync"
+	"urlify/internal/model/application"
 	"urlify/internal/model/domain/reference/factories"
 	"urlify/internal/model/domain/reference/repository"
-	"urlify/internal/model/domain/reference/services"
+	reference "urlify/internal/model/domain/reference/service"
 	encoding2 "urlify/internal/model/infrastructure/encoding"
+)
+
+var (
+	once         sync.Once
+	appContainer *Container
 )
 
 type Container struct {
 	db *sqlx.DB
 }
 
-func NewContainer(database *sqlx.DB) Container {
-	return Container{db: database}
+func New(database *sqlx.DB) *Container {
+	once.Do(func() {
+		appContainer = &Container{db: database}
+	})
+
+	return appContainer
 }
 
-func (container *Container) MakeReferenceService() encoding.ReferenceService {
-	return encoding.NewReferenceService(
+func Get() *Container {
+	return appContainer
+}
+
+func (container *Container) GetReferenceService() reference.ReferenceService {
+	return reference.NewReferenceService(
 		repository.NewPsqlReferenceRepository(container.db),
 		factories.NewReferenceFactory(encoding2.NewBase64EncoderService()),
 	)
+}
+
+func (container *Container) GetEncoder() application.Encoder {
+	return application.NewEncoder(container.GetReferenceService())
 }

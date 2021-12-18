@@ -10,7 +10,7 @@ import (
 func InitializeRouters(engine *gin.Engine, container *container.Container) {
 	healthRouters(engine)
 
-	referenceRouters(engine, controller.NewReferenceController(container.MakeReferenceService()))
+	referenceRouters(engine, controller.NewReferenceController(container.GetEncoder()))
 }
 
 func healthRouters(engine *gin.Engine) gin.IRoutes {
