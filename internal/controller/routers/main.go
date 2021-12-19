@@ -21,5 +21,5 @@ func healthRouters(engine *gin.Engine) gin.IRoutes {
 
 func referenceRouters(engine *gin.Engine, controller controller.ReferenceController) {
 	engine.POST("api/url", controller.Create)
-	engine.GET("api/:hash", controller.View)
+	engine.GET("api/url/:hash", controller.View)
 }

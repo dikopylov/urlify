@@ -39,7 +39,7 @@ type LinkIsCorrect struct {
 }
 
 func (l *LinkIsCorrect) Validate(link string) error {
-	_, err := url.Parse(link)
+	_, err := url.ParseRequestURI(link)
 
 	return err
 }
