@@ -3,7 +3,6 @@ package repository
 import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
-	"log"
 	"urlify/internal/model/domain/reference/model"
 )
 
@@ -49,7 +48,6 @@ func (repository *PsqlReferenceRepository) Insert(entity *model.Reference) error
 		return err
 	}
 
-	log.Println("inse", query, args)
 	_, err = repository.db.Exec(query, args...)
 
 	if err != nil {

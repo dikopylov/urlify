@@ -3,7 +3,6 @@ package controller
 import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 	"urlify/internal/controller/requests"
 	"urlify/internal/model/application"
@@ -52,16 +51,13 @@ func (controller *ReferenceController) View(ctx *gin.Context) {
 	}
 
 	reference, err := controller.encoder.Decode(viewRequest.Hash)
-	log.Println("Encode ", reference, err)
-	if err != nil && err != sql.ErrNoRows {
-		ctx.JSON(http.StatusInternalServerError, err.Error())
+
+	switch err {
+	case sql.ErrNoRows:
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Link Not Found"})
+	case nil:
+		ctx.JSON(http.StatusOK, reference)
+	default:
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
-
-	if reference == nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": "Not Found"})
-
-		return
-	}
-
-	ctx.JSON(http.StatusOK, reference)
 }
