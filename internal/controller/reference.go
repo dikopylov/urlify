@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"database/sql"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"urlify/internal/controller/requests"
 	"urlify/internal/model/application"
@@ -26,25 +28,39 @@ func (controller *ReferenceController) Create(ctx *gin.Context) {
 
 	reference, err := controller.encoder.Encode(creationRequest.Url)
 
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+
+		return
+	}
+
 	switch reference {
 	case nil:
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	default:
 		ctx.JSON(http.StatusCreated, reference)
 	}
 }
 
 func (controller *ReferenceController) View(ctx *gin.Context) {
-	hash := ctx.Param("hash")
+	var viewRequest requests.ViewRequest
 
-	reference, err := controller.encoder.Decode(hash)
+	if err := ctx.ShouldBindUri(&viewRequest); err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 
-	if err != nil {
+		return
+	}
+
+	reference, err := controller.encoder.Decode(viewRequest.Hash)
+	log.Println("Encode ", reference, err)
+	if err != nil && err != sql.ErrNoRows {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	if reference == nil {
-		ctx.JSON(http.StatusNotFound, "Not Found")
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Not Found"})
+
+		return
 	}
 
 	ctx.JSON(http.StatusOK, reference)

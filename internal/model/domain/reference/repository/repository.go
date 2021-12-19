@@ -3,6 +3,7 @@ package repository
 import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
+	"log"
 	"urlify/internal/model/domain/reference/model"
 )
 
@@ -37,13 +38,19 @@ func NewPsqlReferenceRepository(db *sqlx.DB) *PsqlReferenceRepository {
 }
 
 func (repository *PsqlReferenceRepository) Insert(entity *model.Reference) error {
-	query, _, err := sq.Insert(Table).Columns("url", "hash", "created_at").ToSql()
+	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+
+	query, args, err := psql.Insert(Table).
+		Columns("url", "hash", "created_at").
+		Values(entity.Url, entity.Hash, sq.Expr("now()")).
+		ToSql()
 
 	if err != nil {
 		return err
 	}
 
-	_, err = repository.db.NamedExec(query, entity)
+	log.Println("inse", query, args)
+	_, err = repository.db.Exec(query, args...)
 
 	if err != nil {
 		return err
@@ -67,7 +74,7 @@ func (repository *PsqlReferenceRepository) GetByCriteria(criteria Criteria) (*mo
 		return nil, err
 	}
 
-	err = repository.db.Get(&reference, query, args)
+	err = repository.db.Get(&reference, query, args...)
 
 	if err != nil {
 		return nil, err

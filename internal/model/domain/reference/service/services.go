@@ -1,6 +1,7 @@
 package service
 
 import (
+	"database/sql"
 	"urlify/internal/model/domain/reference/factories"
 	"urlify/internal/model/domain/reference/model"
 	"urlify/internal/model/domain/reference/repository"
@@ -21,10 +22,14 @@ func NewReferenceService(repository repository.ReferenceRepository, factory fact
 }
 
 func (service *ReferenceService) Encode(link string) (*model.Reference, error) {
-	validator := validation.Validator{}
-	validator.SetRules([]validation.Rule{&validation.LinkIsCorrect{}, &rules.LinkIsNotEmpty{}})
-
-	err := validator.Validate(link)
+	err := (&validation.Validator{}).
+		SetRules(
+			[]validation.Rule{
+				&validation.LinkIsCorrect{},
+				&rules.LinkIsNotEmpty{},
+			},
+		).
+		Validate(link)
 
 	if err != nil {
 		return nil, err
@@ -35,7 +40,7 @@ func (service *ReferenceService) Encode(link string) (*model.Reference, error) {
 
 	reference, err := service.repository.GetByCriteria(criteria)
 
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
 
