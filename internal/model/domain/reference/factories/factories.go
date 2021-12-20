@@ -6,10 +6,10 @@ import (
 )
 
 type ReferenceFactory struct {
-	encoder encoding.EncoderService
+	encoder encoding.Encoder
 }
 
-func NewReferenceFactory(encoder encoding.EncoderService) ReferenceFactory {
+func NewReferenceFactory(encoder encoding.Encoder) ReferenceFactory {
 	return ReferenceFactory{encoder: encoder}
 }
 
