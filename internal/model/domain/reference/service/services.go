@@ -11,10 +11,10 @@ import (
 
 type ReferenceService struct {
 	repository repository.ReferenceRepository
-	factory    factories.ReferenceFactory
+	factory    factories.ReferenceMaker
 }
 
-func NewReferenceService(repository repository.ReferenceRepository, factory factories.ReferenceFactory) ReferenceService {
+func NewReferenceService(repository repository.ReferenceRepository, factory factories.ReferenceMaker) ReferenceService {
 	return ReferenceService{
 		repository: repository,
 		factory:    factory,
