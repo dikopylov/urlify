@@ -2,15 +2,14 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
-	"urlify/internal/model/infrastructure/container"
 )
 
-type routerFunction func(engine *gin.Engine, container *container.Container)
+type routerFunction func(engine *gin.Engine)
 
-func New(container *container.Container, initializeRouters routerFunction) *gin.Engine {
+func New(initializeRouters routerFunction) *gin.Engine {
 	engine := gin.Default()
 
-	initializeRouters(engine, container)
+	initializeRouters(engine)
 
 	return engine
 }

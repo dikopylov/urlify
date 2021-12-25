@@ -7,10 +7,10 @@ import (
 	"urlify/internal/model/infrastructure/container"
 )
 
-func InitializeRouters(engine *gin.Engine, container *container.Container) {
+func InitializeRouters(engine *gin.Engine) {
 	healthRouters(engine)
 
-	referenceRouters(engine, controller.NewReferenceController(container.GetEncoder()))
+	referenceRouters(engine)
 }
 
 func healthRouters(engine *gin.Engine) gin.IRoutes {
@@ -19,7 +19,15 @@ func healthRouters(engine *gin.Engine) gin.IRoutes {
 	})
 }
 
-func referenceRouters(engine *gin.Engine, controller controller.ReferenceController) {
-	engine.POST("api/url", controller.Create)
-	engine.GET("api/url/:hash", controller.View)
+func referenceRouters(engine *gin.Engine) {
+	apiHandler := controller.NewReferenceAPIController(container.Get().GetEncoder())
+	handler := controller.NewReferenceController(container.Get().GetEncoder())
+
+	api := engine.Group("api")
+	{
+		api.POST("url", apiHandler.Create)
+		api.GET("url/:hash", apiHandler.View)
+	}
+
+	engine.GET(":hash", handler.View)
 }

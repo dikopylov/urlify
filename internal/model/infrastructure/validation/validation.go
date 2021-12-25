@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"errors"
 	"net/url"
 )
 
@@ -39,7 +40,15 @@ type LinkIsCorrect struct {
 }
 
 func (l *LinkIsCorrect) Validate(link string) error {
-	_, err := url.ParseRequestURI(link)
+	url, err := url.ParseRequestURI(link)
+
+	if err != nil {
+		return err
+	}
+
+	if url.Scheme == "" {
+		return errors.New("scheme not found")
+	}
 
 	return err
 }
