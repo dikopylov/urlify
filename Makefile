@@ -8,3 +8,6 @@ build:
 
 shell:
 	docker-compose exec app sh
+
+test:
+	docker-compose exec app go test -v ./...
