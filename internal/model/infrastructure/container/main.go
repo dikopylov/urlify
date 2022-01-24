@@ -32,9 +32,11 @@ func Get() *Container {
 }
 
 func (container *Container) GetReferenceService() reference.ReferenceService {
+	factory := factories.NewReferenceFactory(encoding2.NewBase64EncoderService())
+
 	return reference.NewReferenceService(
 		repository.NewPsqlReferenceRepository(container.db),
-		factories.NewReferenceFactory(encoding2.NewBase64EncoderService()),
+		&factory,
 	)
 }
 
