@@ -2,6 +2,13 @@
 
 Сервис сокращения URL
 
+## Как запустить
+```shell
+cp example.env .env
+make build
+make up
+```
+
 ## Команды
 * Build: `make build`
 * Run: `make up`
