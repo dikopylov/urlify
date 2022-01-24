@@ -52,7 +52,11 @@ func (service *ReferenceService) Encode(link string) (*model.Reference, error) {
 
 	err = service.repository.Insert(reference)
 
-	return reference, err
+	if err != nil {
+		return nil, err
+	}
+
+	return reference, nil
 }
 
 func (service *ReferenceService) GetByCriteria(criteria repository.Criteria) (*model.Reference, error) {

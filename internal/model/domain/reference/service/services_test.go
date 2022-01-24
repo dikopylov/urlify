@@ -1,10 +1,10 @@
 package service
 
 import (
+	"database/sql"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"reflect"
 	"testing"
-	"urlify/internal/model/domain/reference/factories"
 	"urlify/internal/model/domain/reference/model"
 	"urlify/internal/model/domain/reference/repository"
 )
@@ -32,54 +32,51 @@ func (m *FactoryMock) Make(url string) *model.Reference {
 	return args.Get(0).(*model.Reference)
 }
 
-func TestReferenceService_Encode(t *testing.T) {
-	link := "https://test.com"
-
+func TestReferenceService_Encode_ReferenceDoesntExists(t *testing.T) {
 	repositoryMock := new(RepositoryMock)
-	//repositoryMock.On("Encode", mock.Anything).Return(url)
+	factoryMock := new(FactoryMock)
 
+	link := "https://test.com"
+	newReference := &model.Reference{}
+	var nilReference *model.Reference
 	criteria := repository.Criteria{}
 	criteria.AddParameter(repository.ColumnUrl, link)
 
-	reference, err := repositoryMock.GetByCriteria(criteria)
+	repositoryMock.On("GetByCriteria", criteria).Return(nilReference, sql.ErrNoRows)
+	factoryMock.On("Make", link).Return(newReference, nil)
+	repositoryMock.On("Insert", newReference).Return(nil)
 
-	factory := new(FactoryMock)
+	service := NewReferenceService(repositoryMock, factoryMock)
+	actual, actualErr := service.Encode(link)
+	expected := newReference
+	var expectedErr interface{} = nil
 
-	service := NewReferenceService(repositoryMock, factory)
-	service.Encode(link)
+	assert.Equal(t, actual, expected)
+	assert.Equal(t, actualErr, expectedErr)
+	repositoryMock.AssertExpectations(t)
+	factoryMock.AssertExpectations(t)
 }
 
-func TestReferenceService_GetByCriteria(t *testing.T) {
-	type fields struct {
-		repository repository.ReferenceRepository
-		factory    factories.ReferenceFactory
-	}
-	type args struct {
-		criteria repository.Criteria
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    *model.Reference
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			service := &ReferenceService{
-				repository: tt.fields.repository,
-				factory:    tt.fields.factory,
-			}
-			got, err := service.GetByCriteria(tt.args.criteria)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetByCriteria() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetByCriteria() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
+func TestReferenceService_Encode_ReferenceDoesntExists_FailInsert(t *testing.T) {
+	repositoryMock := new(RepositoryMock)
+	factoryMock := new(FactoryMock)
+
+	link := "https://test.com"
+	newReference := &model.Reference{}
+	var nilReference *model.Reference
+	criteria := repository.Criteria{}
+	criteria.AddParameter(repository.ColumnUrl, link)
+
+	repositoryMock.On("GetByCriteria", criteria).Return(nilReference, sql.ErrNoRows)
+	factoryMock.On("Make", link).Return(newReference, nil)
+	repositoryMock.On("Insert", newReference).Return(sql.ErrTxDone)
+
+	service := NewReferenceService(repositoryMock, factoryMock)
+	actual, actualErr := service.Encode(link)
+	expectedErr := sql.ErrTxDone
+
+	assert.Nil(t, actual)
+	assert.Equal(t, actualErr, expectedErr)
+	repositoryMock.AssertExpectations(t)
+	factoryMock.AssertExpectations(t)
 }

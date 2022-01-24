@@ -4,10 +4,11 @@
 
 ## Routes
 
-| HTTP method | Route       | Description        |
-|-------------|-------------|--------------------|
-| POST        | /api/url    | Create short link  |
-| GET         | /api/<hash> | Get link from hash |
+| HTTP method | Route            | Description               |
+|-------------|------------------|---------------------------|
+| POST        | /api/url         | Create short link         |
+| GET         | /api/<HASH_HERE> | Get link from hash        |
+| GET         | /<HASH_HERE>     | Redirect to original link |
 
 ## Migrations
 
