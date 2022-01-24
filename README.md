@@ -2,6 +2,11 @@
 
 Сервис сокращения URL
 
+## Команды
+* Build: `make build`
+* Run: `make up`
+* Tests: `make test`
+
 ## Routes
 
 | HTTP method | Route            | Description               |
