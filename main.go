@@ -8,14 +8,12 @@ import (
 	"urlify/internal/model/infrastructure/server"
 )
 
-var AppContainer *container.Container
-
 func main() {
 	configuration := config.LoadConfig()
 
 	db := database.Connect(&configuration.Database)
 
-	AppContainer = container.New(db)
+	container.New(db)
 
 	engine := server.New(routers.InitializeRouters)
 
