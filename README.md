@@ -1,15 +1,15 @@
 # Urlify
 
-Сервис сокращения URL
+URL shortener
 
-## Как запустить
+## How to run
 ```shell
 cp example.env .env
 make build
 make up
 ```
 
-## Команды
+## Commands
 * Build: `make build`
 * Run: `make up`
 * Tests: `make test`
